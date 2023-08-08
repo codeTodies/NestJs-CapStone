@@ -1,15 +1,25 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe } from '@nestjs/common';
-import { UserService } from './user.service';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe,BadRequestException } from '@nestjs/common';
+import { UserService} from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { LoginDto } from './dto/login.dto';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+  @Post('signup')
+  async register(@Body() createUserDto: CreateUserDto) {
+    try {
+      const newUser = await this.userService.create(createUserDto);
+      return { message: 'User registered successfully', user: newUser };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
 
-  @Post()
-  create(@Body(ValidationPipe) createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+    @Post('signin')
+  async login(@Body() loginDto:LoginDto ) {
+    return this.userService.login(loginDto);
   }
 
   @Get()

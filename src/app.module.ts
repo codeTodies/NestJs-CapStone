@@ -3,12 +3,17 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CommentModule } from './comment/comment.module';
 import { UserModule } from './user/user.module';
+import { MulterModule } from '@nestjs/platform-express/multer';
 import { McommentModule } from './mcomment/mcomment.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ImageModule } from './image/image.module';
 
 @Module({
   imports: [
+    MulterModule.register({
+      dest:process.cwd() + '/upload'
+    }),
     ConfigModule.forRoot({isGlobal: true, envFilePath:['.env']}),
     TypeOrmModule.forRootAsync({
       imports:[ConfigModule],
@@ -25,9 +30,9 @@ import { McommentModule } from './mcomment/mcomment.module';
         entities:[__dirname + "/**/*.entity{.ts,.js}"],
       })
     }),
-    CommentModule,
     UserModule,
     McommentModule,
+    ImageModule,
   ],
   controllers: [AppController],
   providers: [AppService],

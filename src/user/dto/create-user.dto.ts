@@ -6,7 +6,7 @@ export class CreateUserDto {
     firstName: string;
     @IsString()
     lastName: string;
-    @IsEmail()
+    @IsEmail({}, { message: 'Invalid email format' })
     email:string;
     @IsString()
     password:string;

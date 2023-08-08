@@ -1,9 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete,  UploadedFile, UseInterceptors, BadRequestException, Res } from '@nestjs/common';
+import { Express, Response } from 'express';
 import { McommentService } from './mcomment.service';
 import { CreateMcommentDto } from './dto/create-mcomment.dto';
 import { UpdateMcommentDto } from './dto/update-mcomment.dto';
-
-@Controller('mcomment')
+import * as path from 'path';
+interface FileParams{
+fileName:string;
+}
+@Controller('comment')
 export class McommentController {
   constructor(private readonly mcommentService: McommentService) {}
 
@@ -11,6 +15,7 @@ export class McommentController {
   create(@Body() createMcommentDto: CreateMcommentDto) {
     return this.mcommentService.create(createMcommentDto);
   }
+
 
   @Get()
   findAll() {
