@@ -1,42 +1,36 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable,ConflictException } from '@nestjs/common';
 import { CreateImageDto } from './dto/create-image.dto';
 import { UpdateImageDto } from './dto/update-image.dto';
 import { readdir,stat } from 'fs/promises';
 import { join } from 'path';
+import { Imafe } from './entities/image.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 @Injectable()
 export class ImageService {
-  create(createImageDto: CreateImageDto) {
-    return 'This action adds a new image';
+  constructor(
+    @InjectRepository(Imacdfe)
+    private imageRepository:Repository<Imafe>
+  ){}
+
+   async createImage(createImage:CreateImageDto): Promise<Imafe> {
+    const image = this.imageRepository.create(createImage);
+    return this.imageRepository.save(image);
   }
+ async getAllUploadedFiles(): Promise<any[]> {
+  const uploadDir = join(__dirname, '../../upload');
+  const files = await readdir(uploadDir);
 
-  findAll() {
-    return `This action returns all image`;
-  }
+  const fileInfoList = await Promise.all(files.map(async (fileName) => {
+    const filePath = join(uploadDir, fileName);
+    const imageInfo = await this.imageRepository.findOne({ where: { fileName } });
+    return { fileName, filePath, imageInfo };
+  }));
 
-  findOne(id: number) {
-    return `This action returns a #${id} image`;
-  }
-
-  update(id: number, updateImageDto: UpdateImageDto) {
-    return `This action updates a #${id} image`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} image`;
-  }
+  return fileInfoList;
+}
 
 
-  async getAllUploadedFiles(): Promise<any[]> {
-    const uploadDir = join(__dirname, '../../upload');
-    const files = await readdir(uploadDir);
-    
-    const fileInfoList = files.map((fileName) => {
-      const filePath = join(uploadDir, fileName);
-      return { fileName, filePath };
-    });
-
-    return fileInfoList;
-  }
 
   async getFileDetails(fileName: string): Promise<any | null> {
     const filePath = join(__dirname, '../../upload', fileName);
