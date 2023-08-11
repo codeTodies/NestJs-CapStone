@@ -1,7 +1,7 @@
 import {Entity, PrimaryGeneratedColumn, Column} from 'typeorm'
 
 @Entity()
-export class Imafe {
+export class Imate {
    @PrimaryGeneratedColumn()
     id:number;
 
@@ -9,8 +9,11 @@ export class Imafe {
     author:string;
 
     @Column()
-    info:string;
+    content:string;
     
     @Column()
     fileName:string;
+
+    @Column()
+    isSave:boolean;
 }

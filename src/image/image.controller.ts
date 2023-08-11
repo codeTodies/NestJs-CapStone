@@ -4,9 +4,8 @@ import { diskStorage } from 'multer';
 import { Express, Response } from 'express';
 import { ImageService } from './image.service';
 import { CreateImageDto } from './dto/create-image.dto';
-import { UpdateImageDto } from './dto/update-image.dto';
 import { ApiBody, ApiConsumes, ApiOperation  } from '@nestjs/swagger';
-import { Imafe } from './entities/image.entity';
+import {Imate } from './entities/image.entity';
 
 @Controller('image')
 export class ImageController {
@@ -36,7 +35,7 @@ export class ImageController {
     properties: {
       image: { type: 'string', format: 'binary' },
       author: { type: 'string' },
-      info: { type: 'string' },
+      content: { type: 'string' },
     },
     required: ['image'], 
   },
@@ -52,12 +51,12 @@ async uploadFile(
     throw new BadRequestException('empty value');
   } else {
     // Tạo instance mới của entity
-    const newImage = new Imafe();
+    const newImage = new Imate();
     
     // Gán giá trị từ infoImage vào entity
     newImage.author = infoImage.author;
-    newImage.info = infoImage.info;
-    
+    newImage.content = infoImage.content;
+    newImage.isSave=false;
     // Gán giá trị fileName
     newImage.fileName = file.originalname;
 
@@ -81,8 +80,8 @@ async uploadFile(
 
 
    @Get('getFile/:fileName')
-  async getFile(@Param('fileName') fileName: string) {
-    const fileDetails = await this.imageService.getFileDetails(fileName);
+    async getFile(@Param('fileName') fileName: string) {
+    const fileDetails = await this.imageService.getFileByName(fileName);
     
     if (!fileDetails) {
       throw new BadRequestException('File not found');
@@ -90,4 +89,37 @@ async uploadFile(
     
     return fileDetails;
   }
+
+  @Get('getAuthorByID/:id')
+  async getAuthorByID(@Param('id') id: number){
+    const fileInfo= await this.imageService.getAuthorByID(id);
+    
+    if(!fileInfo)
+    {
+      throw new BadRequestException('File not found');
+    }
+    return fileInfo
+  }
+
+  @Get('getCommentByID/:id')
+  async getCommentByID(@Param('id') id: number){
+    const fileInfo= await this.imageService.getCommentByID(id);
+    if(!fileInfo)
+    {
+      throw new BadRequestException('File not found');
+    }
+    return fileInfo
+  }
+
+  @Patch('saveCommentByID/:id')
+  async saveCommentByID(@Param('id') id: number){
+    return this.imageService.saveImageByID(id)
+    
+  }
+
+  @Get('getSavedFile')
+  async getSavedFile(){
+    return this.imageService.getImageSaved()
+  }
+
 }

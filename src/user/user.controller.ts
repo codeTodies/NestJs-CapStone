@@ -28,6 +28,14 @@ export class UserController {
   }
 
     @Post('signin')
+    @ApiBody({
+  schema: {
+    properties: {
+      email: { type: 'string'},
+      password: {type: 'string'}
+    },
+  },
+})
   async login(@Body() loginDto:LoginDto ) {
     return this.userService.login(loginDto);
   }

@@ -1,4 +1,7 @@
-import { PartialType } from '@nestjs/swagger';
+import { IsBoolean } from 'class-validator';
 import { CreateImageDto } from './create-image.dto';
 
-export class UpdateImageDto extends PartialType(CreateImageDto) {}
+export class SaveImage {
+    @IsBoolean()
+    isSave: boolean;
+}
