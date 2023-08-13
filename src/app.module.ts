@@ -5,7 +5,6 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { MulterModule } from '@nestjs/platform-express/multer';
-import { McommentModule } from './mcomment/mcomment.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ImageModule } from './image/image.module';
 
@@ -31,7 +30,6 @@ import { ImageModule } from './image/image.module';
       })
     }),
     UserModule,
-    McommentModule,
     ImageModule,
   ],
   controllers: [AppController],

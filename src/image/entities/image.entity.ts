@@ -1,12 +1,9 @@
-import {Entity, PrimaryGeneratedColumn, Column} from 'typeorm'
-
+import {Entity, PrimaryGeneratedColumn, Column, ManyToOne,JoinColumn} from 'typeorm'
+import { User } from 'src/user/entities/user.entity';
 @Entity()
 export class Imate {
    @PrimaryGeneratedColumn()
     id:number;
-
-    @Column()
-    author:string;
 
     @Column()
     content:string;
@@ -16,4 +13,8 @@ export class Imate {
 
     @Column()
     isSave:boolean;
+
+    @ManyToOne(() => User, user => user.id) 
+    @JoinColumn({ name: 'AuthorID', referencedColumnName: 'id' }) 
+    authorID: number; 
 }

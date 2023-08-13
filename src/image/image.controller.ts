@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete,  UploadedFile, UseInterceptors, BadRequestException, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete,  UploadedFile, UseInterceptors, BadRequestException} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { Express, Response } from 'express';
@@ -34,7 +34,7 @@ export class ImageController {
     type: 'object',
     properties: {
       image: { type: 'string', format: 'binary' },
-      author: { type: 'string' },
+      authorID: { type: 'number' },
       content: { type: 'string' },
     },
     required: ['image'], 
@@ -50,23 +50,26 @@ async uploadFile(
   if (!infoImage) {
     throw new BadRequestException('empty value');
   } else {
+    const user = await this.imageService.findUserByAuthor(infoImage.authorID);
+    if (!user) {
+      throw new BadRequestException('Invalid author');
+    }
+
     // Tạo instance mới của entity
     const newImage = new Imate();
     
     // Gán giá trị từ infoImage vào entity
-    newImage.author = infoImage.author;
     newImage.content = infoImage.content;
-    newImage.isSave=false;
+    newImage.isSave = false;
+    newImage.authorID=infoImage.authorID;
     // Gán giá trị fileName
     newImage.fileName = file.originalname;
 
-    // Lưu entity vào cơ sở dữ liệu
     const savedImage = await this.imageService.createImage(newImage);
     
     // Trả về kết quả
     return {
       message: 'Upload successful',
-      fileName: file.originalname,
       image: savedImage,
     };
   }
@@ -92,6 +95,7 @@ async uploadFile(
 
   @Get('getAuthorByID/:id')
   async getAuthorByID(@Param('id') id: number){
+    
     const fileInfo= await this.imageService.getAuthorByID(id);
     
     if(!fileInfo)
@@ -121,5 +125,22 @@ async uploadFile(
   async getSavedFile(){
     return this.imageService.getImageSaved()
   }
+
+ @Delete('delete/:id')
+ async deleteFile(@Param('id') id: number){
+  return this.imageService.deleteData(id)
+ }
+
+ @Get('getImageByAuthorID/:id')
+ async getImageByAuthorID(@Param('id') id:number){
+  return this.imageService.getImagesByAuthorID(id)
+ }
+ 
+ 
+ @Get('getSavedImageByAuthorID/:id')
+ async getSavedImageByAuthorID(@Param('id') id:number)
+{
+  return this.imageService.getImagesSavedByAuthorID(id)
+}
 
 }

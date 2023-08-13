@@ -1,8 +1,8 @@
-import { IsBoolean, IsString } from "class-validator";
+import { IsBoolean, IsNumber, IsString } from "class-validator";
 
 export class CreateImageDto {
-    @IsString()
-    author: string;
+    @IsNumber()
+    authorID: number;
     @IsString()
     content: string;
     @IsString()
